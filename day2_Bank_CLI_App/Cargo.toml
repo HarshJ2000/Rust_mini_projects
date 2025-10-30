@@ -1,6 +1,0 @@
-[package]
-name = "day2_Bank_CLI_App"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
