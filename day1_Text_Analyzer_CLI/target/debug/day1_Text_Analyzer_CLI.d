@@ -1,1 +1,0 @@
-/home/harsh/Projects/rust_projects/solana-hardcore-30-days/day1_Text_Analyzer_CLI/target/debug/day1_Text_Analyzer_CLI: /home/harsh/Projects/rust_projects/solana-hardcore-30-days/day1_Text_Analyzer_CLI/src/main.rs

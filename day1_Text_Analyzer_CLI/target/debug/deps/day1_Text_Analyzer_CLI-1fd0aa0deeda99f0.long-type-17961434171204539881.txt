@@ -1,2 +1,0 @@
-Filter<collections::hash::map::Iter<'_, String, {integer}>, {closure@src/main.rs:36:50: 36:64}>
-Filter<std::collections::hash_map::Iter<'_, String, {integer}>, {closure@src/main.rs:36:50: 36:64}>
