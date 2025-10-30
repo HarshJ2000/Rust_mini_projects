@@ -4,8 +4,8 @@ pub struct Account {
 }
 
 pub enum TransactionType {
-    depositMoney(u64),
-    withdrawMoney(u64),
+    DepositMoney(u64),
+    WithdrawMoney(u64),
 }
 
 pub enum TransactionErr {
