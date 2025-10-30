@@ -1,6 +1,6 @@
 pub struct Account {
     account_number: u32,
-    balance: f64,
+    balance: u64,
 }
 
 // pub enum TransactionType {
@@ -15,15 +15,15 @@ pub enum TransactionErr {
 }
 
 impl Account {
-    pub fn new(account_number: u32, balance: f64) -> Self {
+    pub fn new(account_number: u32, balance: u64) -> Self {
         Account {
             account_number,
-            balance: 0.0,
+            balance: 0,
         }
     }
 
-    pub fn deposit_money(&mut self, amount: f64) {
-        if amount > 0.0 {
+    pub fn deposit_money(&mut self, amount: u64) {
+        if amount > 0 {
             self.balance += amount;
             println!("Deposited: {}, New balance: {}", amount, self.balance);
         } else {
@@ -31,13 +31,13 @@ impl Account {
         }
     }
 
-    pub fn withdraw_money(&mut self, amount: f64) -> Result<(), TransactionErr> {
+    pub fn withdraw_money(&mut self, amount: u64) -> Result<(), TransactionErr> {
         // Used TransactionErr enum inside impl fn as a parameter
-        if amount < 0.0 {
+        if amount < 0 {
             return Err(TransactionErr::InvalidAmt);
         }
 
-        let min_balance = 10.0;
+        let min_balance = 10;
         if self.balance - amount > min_balance {
             self.balance -= amount;
             println!("Withdrew: {}, New balance: {}", amount, self.balance);
@@ -51,23 +51,23 @@ impl Account {
 fn main() {
     let mut account1 = Account {
         account_number: 101,
-        balance: 1000.00,
+        balance: 1000,
     };
 
     // Trying to deposit valid amount
-    account1.deposit_money(1000.0);
+    account1.deposit_money(1000);
 
     // Trying to deposit invalid amount
-    account1.deposit_money(-1000.0);
+    account1.deposit_money(-1000);
 
     // attempting to withdraw money while maintaining minimum balance
-    match account1.withdraw_money(500.0) {
+    match account1.withdraw_money(500) {
         Ok(()) => println!("Withdraw Successful...."),
         Err(err) => println!("Withdraw failed: {:?}", err),
     }
 
     // attempting to withdraw money beyond balance
-    match account1.withdraw_money(2500.0) {
+    match account1.withdraw_money(2500) {
         Ok(()) => println!("Withdraw Successful...."),
         Err(e) => println!("Withdraw Failed: {:?}", e),
     }
