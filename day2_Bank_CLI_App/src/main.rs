@@ -18,7 +18,7 @@ impl Account {
     pub fn new(account_number: u32, balance: u64) -> Self {
         Account {
             account_number,
-            balance: 0,
+            balance,
         }
     }
 
@@ -33,12 +33,12 @@ impl Account {
 
     pub fn withdraw_money(&mut self, amount: u64) -> Result<(), TransactionErr> {
         // Used TransactionErr enum inside impl fn as a parameter
-        if amount < 0 {
+        if amount <= 0 {
             return Err(TransactionErr::InvalidAmt);
         }
 
         let min_balance = 10;
-        if self.balance - amount > min_balance {
+        if self.balance >= amount + min_balance {
             self.balance -= amount;
             println!("Withdrew: {}, New balance: {}", amount, self.balance);
             Ok(())
@@ -58,7 +58,7 @@ fn main() {
     account1.deposit_money(1000);
 
     // Trying to deposit invalid amount
-    account1.deposit_money(-1000);
+    account1.deposit_money(0);
 
     // attempting to withdraw money while maintaining minimum balance
     match account1.withdraw_money(500) {
