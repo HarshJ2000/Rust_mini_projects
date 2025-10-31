@@ -1,5 +1,5 @@
 pub struct Account {
-    account_number: u32,
+    _account_number: u32,
     balance: u64,
 }
 
@@ -15,9 +15,9 @@ pub enum TransactionErr {
 }
 
 impl Account {
-    pub fn new(account_number: u32, balance: u64) -> Self {
+    pub fn new(_account_number: u32, balance: u64) -> Self {
         Account {
-            account_number,
+            _account_number,
             balance,
         }
     }
@@ -50,7 +50,7 @@ impl Account {
 
 fn main() {
     let mut account1 = Account {
-        account_number: 101,
+        _account_number: 101,
         balance: 1000,
     };
 
