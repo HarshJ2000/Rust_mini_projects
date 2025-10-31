@@ -1,0 +1,1 @@
+/home/harsh/Projects/rust_projects/solana-hardcore-30-days-RUST/day3_file_reader_cli/target/debug/day3_File_Reader_CLI: /home/harsh/Projects/rust_projects/solana-hardcore-30-days-RUST/day3_file_reader_cli/src/main.rs
