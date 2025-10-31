@@ -1,14 +1,20 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+use borsh::{BorshDeserialize, BorshSerialize};
+use solana_program::{
+    account_info::{AccountInfo, next_account_info},
+    entrypoint::ProgramResult,
+};
+
+#[derive(BorshSerialize, BorshDeserialize)]
+struct Counter {
+    count: u32,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[derive(BorshSerialize, BorshDeserialize)]
+enum InstructionType {
+    Increment(u32),
+    Decrement(u32),
+}
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+pub fn counter_contract() -> ProgramResult {
+    Ok(())
 }
