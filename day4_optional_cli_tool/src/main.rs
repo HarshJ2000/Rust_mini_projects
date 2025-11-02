@@ -1,4 +1,4 @@
-use std::env::{self, args};
+use std::env;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -12,7 +12,7 @@ fn main() {
     let num: i32 = match args[1].parse() {
         Ok(num) => num,
         Err(_) => {
-            println!("Error: {} is not a valid number!!!!!");
+            println!("Error: {} is not a valid number!!!!!", &args[1]);
             std::process::exit(1);
         }
     };
