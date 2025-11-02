@@ -16,4 +16,12 @@ fn main() {
             std::process::exit(1);
         }
     };
+
+    let result = if args.contains(&"--double".to_string()) {
+        Some(num * 2)
+    } else if args.contains(&"--square".to_string()) {
+        Some(num * num)
+    } else {
+        None
+    };
 }
