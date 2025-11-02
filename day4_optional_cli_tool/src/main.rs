@@ -24,4 +24,9 @@ fn main() {
     } else {
         None
     };
+
+    match result {
+        Some(res) => println!("Result: {}", res),
+        None => println!("No operation flag was provided!!!!!!"),
+    }
 }
