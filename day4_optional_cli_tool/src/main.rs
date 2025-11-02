@@ -3,11 +3,9 @@ use std::env;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    if args.len() > 2 {
-        let arg1 = &args[1];
-        let arg2 = &args[2];
-
-        println!("{}", arg1);
-        println!("{}", arg2);
+    // skipping the first argument and just in case if <2 args given, providing instructions for the same
+    if args.len() < 2 {
+        println!("Usage: cargo run -- <number> [--double | --square]");
+        std::process::exit(1);
     }
 }
