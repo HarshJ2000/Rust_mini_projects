@@ -1,4 +1,4 @@
-use std::env;
+use std::env::{self, args};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -8,4 +8,12 @@ fn main() {
         println!("Usage: cargo run -- <number> [--double | --square]");
         std::process::exit(1);
     }
+
+    let num: i32 = match args[1].parse() {
+        Ok(num) => num,
+        Err(_) => {
+            println!("Error: {} is not a valid number!!!!!");
+            std::process::exit(1);
+        }
+    };
 }
