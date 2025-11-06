@@ -1,5 +1,7 @@
 # Rust build artifacts
 /target/
+/tests/node_modules/
+/test-ledger/
 
 # Backup files
 *.rs.bk
