@@ -1,0 +1,17 @@
+# Rust build artifacts
+/target/
+/test-ledger/
+
+# Backup files
+*.rs.bk
+
+# Logs
+*.log
+
+# IDE / Editor settings
+.vscode/
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db
