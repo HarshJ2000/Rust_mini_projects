@@ -1,3 +1,4 @@
+import { BackpackWalletAdapter } from "@solana/wallet-adapter-backpack";
 import {
   ConnectionProvider,
   WalletProvider,
@@ -7,19 +8,22 @@ import {
   WalletModalProvider,
   WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui";
-import { FC, ReactNode } from "react";
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-require("@solana/wallet-adapter-react-ui/styles.css");
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
+import { FC, ReactNode, useMemo } from "react";
 
 export const WalletConnectionProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const endpoint = process.env.NEXT_PUBLIC_SOLANA_RPC_URL!;
 
+  const wallets = useMemo(
+    () => [new PhantomWalletAdapter(), new BackpackWalletAdapter()],
+    []
+  );
+
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={[]} autoConnect>
+      <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           <WalletMultiButton></WalletMultiButton>
           <WalletDisconnectButton></WalletDisconnectButton>
