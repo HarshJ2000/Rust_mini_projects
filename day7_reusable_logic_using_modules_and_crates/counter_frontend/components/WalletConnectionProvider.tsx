@@ -11,6 +11,9 @@ import {
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { FC, ReactNode, useMemo } from "react";
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+require("@solana/wallet-adapter-react-ui/styles.css");
+
 export const WalletConnectionProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
