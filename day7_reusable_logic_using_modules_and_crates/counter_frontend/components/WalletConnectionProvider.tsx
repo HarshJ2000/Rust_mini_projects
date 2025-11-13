@@ -28,9 +28,11 @@ export const WalletConnectionProvider: FC<{ children: ReactNode }> = ({
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
-          <WalletMultiButton></WalletMultiButton>
-          <WalletDisconnectButton></WalletDisconnectButton>
+          <div className="p-6 flex flex-col items-center space-y-4">
+          <WalletMultiButton key="wallet-connect" />
+          <WalletDisconnectButton key="wallet-disconnect" />
           {children}
+          </div>
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
