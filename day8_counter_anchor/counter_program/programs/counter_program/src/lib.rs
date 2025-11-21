@@ -41,3 +41,15 @@ pub struct Mutate<'info>{
     pub counter_acc : Account<'info, Counter>,
     pub authority : Signer<'info>,
 }
+
+// Resetting Counter Account Struct
+#[derive(Accounts)]
+pub struct Reset<'info>{
+    #[account(
+        mut, has_one = authority,
+        seeds = [b"counter", counter.authority.as_ref()],
+        bump,
+    )]
+    pub counter_acc : Account<'info, Counter>,
+    pub authority : Signer<'info>,
+}
