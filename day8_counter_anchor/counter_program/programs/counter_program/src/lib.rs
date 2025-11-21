@@ -16,13 +16,13 @@ pub mod counter_program {
 
     pub fn increment(ctx: Context<Mutate>, value: u64) -> Result<()> {
         let ctr = &mut ctx.accounts.counter_acc;
-        ctr.count = ctr.count.checked_add(value).unwrap();
+        ctr.count = ctr.count.checked_add(value).ok_or(ErrorCode::Overflow)?;
         Ok(())
     }
 
     pub fn decrement(ctx: Context<Mutate>, value: u64) -> Result<()> {
         let ctr = &mut ctx.accounts.counter_acc;
-        ctr.count = ctr.count.checked_sub(value).unwrap();
+        ctr.count = ctr.count.checked_sub(value).ok_or(ErrorCode::Underflow)?;
         Ok(())
     }
 
@@ -79,4 +79,13 @@ pub struct Reset<'info> {
 pub struct Counter {
     pub count: u64,
     pub authority: Pubkey,
+}
+
+// Error handling
+#[error_code]
+pub enum ErrorCode {
+    #[msg("Arithmetic Overflow")]
+    Overflow,
+    #[msg("Arithmetic Underflow")]
+    Underflow,
 }
