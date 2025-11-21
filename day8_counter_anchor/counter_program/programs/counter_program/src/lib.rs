@@ -7,20 +7,37 @@ declare_id!("AzrUyx3XLhFWipfNMfPQgjjQMZcsiLcJ6KY2VA5Mpbnj");
 pub mod counter_program {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {}
+    pub fn initialize(ctx: Context<Initialize>, initial: u64) -> Result<()> {
+        let ctr = &mut ctx.accounts.counter_acc;
+        ctr.count = initial;
+        ctr.authority = ctx.accounts.authority.key();
+        Ok(())
+    }
 
-    pub fn increment(ctx: Context<Mutate>) -> Result<()> {}
+    pub fn increment(ctx: Context<Mutate>, value: u64) -> Result<()> {
+        let ctr = &mut ctx.accounts.counter_acc;
+        ctr.count = ctr.count.checked_add(value).unwrap();
+        Ok(())
+    }
 
-    pub fn decrement(ctx: Context<Mutate>) -> Result<()> {}
+    pub fn decrement(ctx: Context<Mutate>, value: u64) -> Result<()> {
+        let ctr = &mut ctx.accounts.counter_acc;
+        ctr.count = ctr.count.checked_sub(value).unwrap();
+        Ok(())
+    }
 
-    pub fn reset(ctx: Context<Reset>) -> Result<()> {}
+    pub fn reset(ctx: Context<Reset>) -> Result<()> {
+        let ctr = &mut ctx.accounts.counter_acc;
+        ctr.count = 0;
+        Ok(())
+    }
 }
 
 // Data account creation
 #[derive(Accounts)]
 pub struct Initialize<'info> {
     #[account(
-        init, payer = signer, space = 8+8+32,
+        init, payer = authority, space = 8+8+32,
         seeds = [b"counter", authority.key().as_ref()],
         bump,
     )]
@@ -36,7 +53,8 @@ pub struct Initialize<'info> {
 pub struct Mutate<'info> {
     #[account(
         mut,
-        seeds = [b"counter", counter.authority.as_ref()],
+        has_one = authority,
+        seeds = [b"counter", authority.key().as_ref()],
         bump,
     )]
     pub counter_acc: Account<'info, Counter>,
@@ -47,8 +65,9 @@ pub struct Mutate<'info> {
 #[derive(Accounts)]
 pub struct Reset<'info> {
     #[account(
-        mut, has_one = authority,
-        seeds = [b"counter", counter.authority.as_ref()],
+        mut,
+        has_one = authority,
+        seeds = [b"counter", authority.key().as_ref()],
         bump,
     )]
     pub counter_acc: Account<'info, Counter>,
