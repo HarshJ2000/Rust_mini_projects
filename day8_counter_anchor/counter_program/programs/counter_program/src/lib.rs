@@ -53,3 +53,10 @@ pub struct Reset<'info>{
     pub counter_acc : Account<'info, Counter>,
     pub authority : Signer<'info>,
 }
+
+// Account Data Account
+#[account]
+pub struct Counter{
+    pub count: u64,
+    pub authority: Pubkey,
+}
