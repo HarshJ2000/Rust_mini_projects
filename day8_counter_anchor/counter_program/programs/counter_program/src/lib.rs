@@ -21,11 +21,23 @@ pub struct Initialize<'info>{
     #[account(
         init, payer = signer, space = 8+8+32,
         seeds = [b"counter", authority.key().as_ref()],
-        bump
+        bump,
     )]
     pub counter_acc : Account<'info, Counter>,
 
     #[account(mut)]
     pub authority : Signer<'info>,
-    pub system_program : Program<'info, System>
+    pub system_program : Program<'info, System>,
+}
+
+// Mutate into Data Accounts
+#[derive(Accounts)]
+pub struct Mutate<'info>{
+    #[account(
+        mut,
+        seeds = [b"counter", counter.authority.as_ref()],
+        bump,
+    )]
+    pub counter_acc : Account<'info, Counter>,
+    pub authority : Signer<'info>,
 }
