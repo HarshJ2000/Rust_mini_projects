@@ -27,6 +27,9 @@ describe("counter_program", () => {
       })
       .rpc();
 
+    const account = await program.account.counter.fetch(counterPda);
+    expect(account.count.toNumber()).to.equal(0);
+
     console.log("Counter PDA: ", counterPda.toString());
   });
 
@@ -45,6 +48,9 @@ describe("counter_program", () => {
         authority,
       })
       .rpc();
+
+    const account = await program.account.counter.fetch(counterPda);
+    expect(account.count.toNumber()).to.equal(5);
 
     console.log("Counter Incremented by 5...");
   });
@@ -65,6 +71,9 @@ describe("counter_program", () => {
       })
       .rpc();
 
+    const account = await program.account.counter.fetch(counterPda);
+    expect(account.count.toNumber()).to.equal(3);
+
     console.log("Counter Decremented by 2...");
   });
 
@@ -83,6 +92,9 @@ describe("counter_program", () => {
         authority,
       })
       .rpc();
+
+    const account = await program.account.counter.fetch(counterPda);
+    expect(account.count.toNumber()).to.equal(0);
 
     console.log("Counter reset to 0");
   });
