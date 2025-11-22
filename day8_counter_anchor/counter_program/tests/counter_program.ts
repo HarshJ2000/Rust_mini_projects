@@ -98,4 +98,47 @@ describe("counter_program", () => {
 
     console.log("Counter reset to 0");
   });
+
+  it("counter should not decrement below zero....", async () => {
+    const authority = provider.wallet.publicKey;
+
+    const [counterPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("counter"), authority.toBuffer()],
+      program.programId
+    );
+    try {
+      await program.methods
+        .decrement(new anchor.BN(1))
+        .accounts({
+          counterAcc: counterPda,
+          authority,
+        })
+        .rpc();
+    } catch (err) {
+      expect(err.error.errorCode.code).to.equal("CannotGoBelowZero");
+    }
+  });
+
+  it("fails when unauthorized user tries to reset counter!!!!", async () => {
+    const authority = provider.wallet.publicKey;
+
+    const [counterPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("counter"), authority.toBuffer()],
+      program.programId
+    );
+    const fakeUser = anchor.web3.Keypair.generate();
+
+    try {
+      await program.methods
+        .reset()
+        .accounts({
+          counterAcc: counterPda,
+          authority: fakeUser.publicKey,
+        })
+        .signers([fakeUser])
+        .rpc();
+    } catch (err) {
+      expect(err.error.errorCode.code).to.equal("ConstraintSeeds");
+    }
+  });
 });

@@ -22,6 +22,9 @@ pub mod counter_program {
 
     pub fn decrement(ctx: Context<Mutate>, value: u64) -> Result<()> {
         let ctr = &mut ctx.accounts.counter_acc;
+        if ctr.count == 0 {
+            return Err(ErrorCode::CannotGoBelowZero.into());
+        }
         ctr.count = ctr.count.checked_sub(value).ok_or(ErrorCode::Underflow)?;
         Ok(())
     }
@@ -88,4 +91,6 @@ pub enum ErrorCode {
     Overflow,
     #[msg("Arithmetic Underflow")]
     Underflow,
+    #[msg("Counter cannot go below zero!!!")]
+    CannotGoBelowZero,
 }
