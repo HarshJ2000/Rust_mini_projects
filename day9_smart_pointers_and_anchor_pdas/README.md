@@ -64,7 +64,7 @@ it("Initialize PDA!", async () => {
   console.log("Tx:", tx);
   console.log("Expected PDA:", pda.toBase58());
 });
-
+```
 
 🛠 Run It Locally
 bash
@@ -80,4 +80,4 @@ anchor test
 ✔ When to use smart pointers in real systems
 ✔ How PDAs are derived using seeds
 ✔ How to write & test PDA initialization in Anchor
-```
+
