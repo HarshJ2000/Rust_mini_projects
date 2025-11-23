@@ -1,7 +1,7 @@
 // Shared Ownership for References
 use std::rc::Rc;
 
-pub fn run_rc_example() {
+pub fn run() {
     let a = Rc::new(10);
     println!("Refernce count initially: {}", Rc::strong_count(&a));
 
