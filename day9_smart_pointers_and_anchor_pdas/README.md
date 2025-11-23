@@ -1,5 +1,4 @@
 # 🧠 Day 9 — Smart Pointers + PDA Initialization (Anchor)
-
 This day covered **two powerful concepts**:
 
 ## 📌 Part 1 — Rust Smart Pointers (Box, Rc, Arc)
@@ -11,15 +10,16 @@ Smart pointers help manage **ownership & memory safely**:
 | `Rc<T>` | Multiple ownership (reference counting) |
 | `Arc<T>` | Same as `Rc`, but thread-safe (for multi-threading) |
 
-### 🧪 Output (Smart Pointer Demo)
+🧪 Output (Smart Pointer Demo)
 
-Value stored in heap using Box: 50
-Recursive list using Box: Cons(1, Cons(2, Cons(3, Nil)))
-Reference count initially: 1
-After cloning 1 time: 2
-After cloning 2nd time: 3
-Reference count finally: 2
+Value stored in heap using Box: 50  
+Recursive list using Box: Cons(1, Cons(2, Cons(3, Nil)))  
+Reference count initially: 1  
+After cloning 1 time: 2  
+After cloning 2nd time: 3  
+Reference count finally: 2  
 
+-------------------
 ## 📌 Part 2 — Anchor PDA Initialization
 
 We built a **program that creates a PDA based on**:
@@ -65,19 +65,18 @@ it("Initialize PDA!", async () => {
   console.log("Expected PDA:", pda.toBase58());
 });
 ```
-
+---
 🛠 Run It Locally
-bash
-Copy code
-anchor build
-anchor deploy
-anchor test
+---
+anchor build  
+anchor deploy  
+anchor test  
 
-
-
+---
 📌 What I Learned
-✔ Difference between Box, Rc, Arc
-✔ When to use smart pointers in real systems
-✔ How PDAs are derived using seeds
-✔ How to write & test PDA initialization in Anchor
+---
+- Difference between Box, Rc, Arc
+- When to use smart pointers in real systems
+- How PDAs are derived using seeds
+- How to write & test PDA initialization in Anchor
 
