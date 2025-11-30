@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-// Storing states for Escrow inside an account
+// Storing states required for Escrow inside an account
 #[account]
 pub struct EscrowState {
     pub initializer: Pubkey,
