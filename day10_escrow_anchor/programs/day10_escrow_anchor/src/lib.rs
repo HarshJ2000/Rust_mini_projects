@@ -1,10 +1,7 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{
-    associated_token::AssociatedToken,
-    token::{Mint, Token, TokenAccount},
-};
+use anchor_spl::associated_token::AssociatedToken;
+use anchor_spl::token::{Mint, Token, TokenAccount};
 
-use crate::errors::EscrowError;
 use crate::state::EscrowState;
 
 pub mod errors;
@@ -15,9 +12,10 @@ declare_id!("8UNhAJrkKqKk6gYxTzHmbSK5BHy3SJFzgQz3Ctt8LKkR");
 #[program]
 pub mod day10_escrow_anchor {
     use super::*;
+    use crate::errors::EscrowError;
 
     // Initializing Escrow Vault.
-    pub fn initialze_escrow(
+    pub fn initialize_escrow(
         ctx: Context<InitializeEscrow>,
         initializer_amount: u64,
         taker_amount: u64,
@@ -52,7 +50,7 @@ pub struct InitializeEscrow<'info> {
     #[account(mut)]
     pub initializer: Signer<'info>,
 
-    // PDA authority account
+    /// CHECK: This PDA stores no data.
     #[account(
         seeds = [b"vault", initializer.key().as_ref()],   // Used to find the PDA for the ATA internally using -> Pubkey::find_program_address(seeds), the PDA will be used to sign transactions by the Vault or ATA
         bump, // This is the bump which is found while finding the PDA (as extra value), will be needed when using PDA to sign transactions
