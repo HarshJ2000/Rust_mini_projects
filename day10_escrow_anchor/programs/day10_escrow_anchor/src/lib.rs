@@ -34,8 +34,13 @@ pub mod day10_escrow_anchor {
             return err!(EscrowError::ExpiredEscrow);
         }
 
-        // Setting Escrow States, which will be needed later while interacting with the escrow account
+        // Setting Escrow States, which will be needed later while interacting with the escrow vault
         let escrow_state = &mut ctx.accounts.escrow_state;
+        escrow_state.initializer = ctx.accounts.initializer.key();
+        escrow_state.initializer_amount = initializer_amount;
+        escrow_state.taker_amount = taker_amount;
+        escrow_state.expiry = expiry;
+        escrow_state.bump = ctx.bumps.vault_authority;
 
         Ok(())
     }
