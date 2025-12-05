@@ -23,14 +23,20 @@ pub mod day10_escrow_anchor {
         taker_amount: u64,
         expiry: i64,
     ) -> Result<()> {
+        // Validating valid amount
         if initializer_amount == 0 || taker_amount == 0 {
             return err!(EscrowError::InvalidAmount);
         }
 
+        // Validating escrow not expired
         let clock = Clock::get()?;
         if expiry <= clock.unix_timestamp {
             return err!(EscrowError::ExpiredEscrow);
         }
+
+        // Setting Escrow States, which will be needed later while interacting with the escrow account
+        let escrow_state = &mut ctx.accounts.escrow_state;
+
         Ok(())
     }
 }
