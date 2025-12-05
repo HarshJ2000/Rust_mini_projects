@@ -1,5 +1,8 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{Mint, Token, TokenAccount};
+use anchor_spl::{
+    associated_token::AssociatedToken,
+    token::{Mint, Token, TokenAccount},
+};
 
 use crate::state::EscrowState;
 
@@ -24,6 +27,7 @@ pub struct InitializeEscrow<'info> {
     #[account(mut)]
     pub initializer: Signer<'info>,
 
+    // PDA authority account
     #[account(
         seeds = [b"vault", initializer.key().as_ref()],   // Used to find the PDA for the ATA internally using -> Pubkey::find_program_address(seeds), the PDA will be used to sign transactions by the Vault or ATA
         bump, // This is the bump which is found while finding the PDA (as extra value), will be needed when using PDA to sign transactions
@@ -55,7 +59,8 @@ pub struct InitializeEscrow<'info> {
     pub system_program: Program<'info, System>,
     // Token program is used to init associated token accounts and managing the transfers
     pub token_program: Program<'info, Token>,
-    //
+    // Associated token account is needed because we've created vault ATA
+    pub associated_token_program: Program<'info, AssociatedToken>,
     // Rent exemption calculation for the accounts created
     pub rent: Sysvar<'info, Rent>,
 }
