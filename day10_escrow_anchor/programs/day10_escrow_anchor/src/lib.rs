@@ -4,6 +4,7 @@ use anchor_spl::{
     token::{Mint, Token, TokenAccount},
 };
 
+use crate::errors::EscrowError;
 use crate::state::EscrowState;
 
 pub mod errors;
@@ -16,7 +17,20 @@ pub mod day10_escrow_anchor {
     use super::*;
 
     // Initializing Escrow Vault.
-    pub fn initialze_escrow(ctx: Context<InitializeEscrow>) -> Result<()> {
+    pub fn initialze_escrow(
+        ctx: Context<InitializeEscrow>,
+        initializer_amount: u64,
+        taker_amount: u64,
+        expiry: i64,
+    ) -> Result<()> {
+        if initializer_amount == 0 || taker_amount == 0 {
+            return err!(EscrowError::InvalidAmount);
+        }
+
+        let clock = Clock::get()?;
+        if expiry <= clock.unix_timestamp {
+            return err!(EscrowError::ExpiredEscrow);
+        }
         Ok(())
     }
 }
