@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use anchor_spl::token::{Mint, Token, TokenAccount};
 
 use crate::state::EscrowState;
 
@@ -54,6 +55,7 @@ pub struct InitializeEscrow<'info> {
     pub system_program: Program<'info, System>,
     // Token program is used to init associated token accounts and managing the transfers
     pub token_program: Program<'info, Token>,
+    //
     // Rent exemption calculation for the accounts created
     pub rent: Sysvar<'info, Rent>,
 }
