@@ -12,7 +12,7 @@ declare_id!("8UNhAJrkKqKk6gYxTzHmbSK5BHy3SJFzgQz3Ctt8LKkR");
 #[program]
 pub mod day10_escrow_anchor {
     use super::*;
-    use crate::errors::EscrowError;
+    use crate::{errors::EscrowError, state::EscrowStatus};
 
     // Initializing Escrow Vault.
     pub fn initialize_escrow(
@@ -39,6 +39,7 @@ pub mod day10_escrow_anchor {
         escrow_state.taker_amount = taker_amount;
         escrow_state.expiry = expiry;
         escrow_state.bump = ctx.bumps.vault_authority;
+        escrow_state.state = EscrowStatus::Initialized;
 
         Ok(())
     }
