@@ -43,6 +43,36 @@ pub mod day10_escrow_anchor {
 
         Ok(())
     }
+
+    pub fn deposit_tokens(ctx: Context<DepositTokens>) -> Result<()> {
+        let escrow = &mut ctx.accounts.escrow_state;
+
+        require!(
+            escrow.state == EscrowStatus::Initialized,
+            EscrowError::Unauthorized
+        );
+
+        let clock = Clock::get()?;
+        require!(
+            escrow.expiry > clock.unix_timestamp,
+            EscrowError::ExpiredEscrow
+        );
+
+        let amount = escrow.initializer_amount;
+
+        let cpi_accounts = anchor_spl::token::Transfer {
+            from: ctx.accounts.initializer_ata.to_account_info(),
+            to: ctx.accounts.vault_ata.to_account_info(),
+            authority: ctx.accounts.initializer.to_account_info(),
+        };
+
+        let cpi_program = ctx.accounts.token_program.to_account_info();
+        anchor_spl::token::transfer(CpiContext::new(cpi_program, cpi_accounts), amount)?;
+
+        escrow.state = EscrowStatus::Deposited;
+
+        Ok(())
+    }
 }
 
 // Constraints for initialize_escrow Function or instruction
