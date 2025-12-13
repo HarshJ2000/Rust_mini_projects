@@ -45,6 +45,7 @@ pub mod day10_escrow_anchor {
     }
 }
 
+// Constraints for initialize_escrow Function or instruction
 #[derive(Accounts)]
 pub struct InitializeEscrow<'info> {
     // Defining the Signer who will initialize the Escrow account
@@ -87,4 +88,41 @@ pub struct InitializeEscrow<'info> {
     pub associated_token_program: Program<'info, AssociatedToken>,
     // Rent exemption calculation for the accounts created
     pub rent: Sysvar<'info, Rent>,
+}
+
+// Constraints for deposit_tokens instruction
+#[derive(Accounts)]
+pub struct DepositTokens<'info> {
+    #[account(mut)]
+    pub initializer: Signer<'info>,
+
+    #[account(
+        mut,
+        constraint = escrow_state.initializer == initializer.key(),
+    )]
+    pub escrow_state: Account<'info, EscrowState>,
+
+    #[account(
+        seeds = [b"vault", initializer.key().as_ref()],
+        bump = escrow_state.bump,
+    )]
+    pub vault_authority: AccountInfo<'info>,
+
+    #[account(
+        mut,
+        associated_token::mint = mint,
+        associated_token::authority = vault_authority,
+    )]
+    pub vault_ata: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        associated_token::mint = mint,
+        associated_token::authority = initializer,
+    )]
+    pub initializer_ata: Account<'info, TokenAccount>,
+
+    pub mint: Account<'info, Mint>,
+
+    pub token_program: Program<'info, Token>,
 }
