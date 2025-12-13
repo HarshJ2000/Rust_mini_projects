@@ -93,21 +93,25 @@ pub struct InitializeEscrow<'info> {
 // Constraints for deposit_tokens instruction
 #[derive(Accounts)]
 pub struct DepositTokens<'info> {
+    // Initializer Account
     #[account(mut)]
     pub initializer: Signer<'info>,
 
+    // Escrow state used for checking ->  if Initializer is valid?
     #[account(
         mut,
         constraint = escrow_state.initializer == initializer.key(),
     )]
     pub escrow_state: Account<'info, EscrowState>,
 
+    // Vault authority or PDA
     #[account(
         seeds = [b"vault", initializer.key().as_ref()],
         bump = escrow_state.bump,
     )]
     pub vault_authority: AccountInfo<'info>,
 
+    // Vault ATA used to store the tokens
     #[account(
         mut,
         associated_token::mint = mint,
@@ -115,6 +119,7 @@ pub struct DepositTokens<'info> {
     )]
     pub vault_ata: Account<'info, TokenAccount>,
 
+    // Initializer ATA where the initializer's tokens are stored and from here will be transferred to the Vault ATA
     #[account(
         mut,
         associated_token::mint = mint,
@@ -122,7 +127,9 @@ pub struct DepositTokens<'info> {
     )]
     pub initializer_ata: Account<'info, TokenAccount>,
 
+    // Mint of the tokens in the Vault ATA and Initializer ATA
     pub mint: Account<'info, Mint>,
 
+    // Token Program used to create and manage ATA's
     pub token_program: Program<'info, Token>,
 }
