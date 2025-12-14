@@ -47,28 +47,35 @@ pub mod day10_escrow_anchor {
     pub fn deposit_tokens(ctx: Context<DepositTokens>) -> Result<()> {
         let escrow = &mut ctx.accounts.escrow_state;
 
+        // Validating if Initializer is authorized or not?
         require!(
             escrow.state == EscrowStatus::Initialized,
             EscrowError::Unauthorized
         );
 
+        // Validating Escrow Expiry
         let clock = Clock::get()?;
         require!(
             escrow.expiry > clock.unix_timestamp,
             EscrowError::ExpiredEscrow
         );
 
+        // Getting amount used to initialize escrow
         let amount = escrow.initializer_amount;
 
+        // Building CPI transfer accounts
         let cpi_accounts = anchor_spl::token::Transfer {
             from: ctx.accounts.initializer_ata.to_account_info(),
             to: ctx.accounts.vault_ata.to_account_info(),
             authority: ctx.accounts.initializer.to_account_info(),
         };
 
+        // Reference to invoke the SPL Token Program
         let cpi_program = ctx.accounts.token_program.to_account_info();
+        // Executing the CPI token transfer
         anchor_spl::token::transfer(CpiContext::new(cpi_program, cpi_accounts), amount)?;
 
+        // Updating the escrow state to deposited
         escrow.state = EscrowStatus::Deposited;
 
         Ok(())
