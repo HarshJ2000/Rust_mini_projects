@@ -80,6 +80,46 @@ pub mod day10_escrow_anchor {
 
         Ok(())
     }
+
+    pub fn withdraw_tokens(ctx: Context<WithdrawTokens>) -> Result<()> {
+        let escrow = &mut ctx.accounts.escrow_state;
+
+        require!(
+            escrow.state == EscrowStatus::Deposited,
+            EscrowError::Unauthorized
+        );
+
+        let clock = Clock::get()?;
+        require!(
+            escrow.expiry > clock.unix_timestamp,
+            EscrowError::ExpiredEscrow
+        );
+
+        let amount = escrow.initializer_amount;
+
+        let initializer_key = escrow.initializer.key();
+        let seeds = &[b"vault", initializer_key.as_ref(), &[escrow.bump]];
+        let signer_seeds = &[&seeds[..]];
+
+        let cpi_accounts = anchor_spl::token::Transfer {
+            from: ctx.accounts.vault_ata.to_account_info(),
+            to: ctx.accounts.initializer_ata.to_account_info(),
+            authority: ctx.accounts.vault_authority.to_account_info(),
+        };
+
+        anchor_spl::token::transfer(
+            CpiContext::new_with_signer(
+                ctx.accounts.token_program.to_account_info(),
+                cpi_accounts,
+                signer_seeds,
+            ),
+            amount,
+        )?;
+
+        escrow.state = EscrowStatus::Cancelled;
+
+        Ok(())
+    }
 }
 
 // Constraints for initialize_escrow Function or instruction
