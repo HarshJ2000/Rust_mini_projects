@@ -157,4 +157,38 @@ describe("day10_escrow_anchor", () => {
         .rpc()
     );
   });
+
+  // -------------------------------
+  //       WITHDRAW TEST (after expiry of the escrow ->  should pass)
+  // -------------------------------
+  it("success in withdrawing tokens after expiry of escrow", async () => {
+    // waiting for escrow to expire
+    await new Promise((resolve) => setTimeout(resolve, 6000));
+
+    const beforeInit = await getBalance(initializerAta);
+
+    await program.methods
+      .withdrawTokens()
+      .accounts({
+        initializer: initializer.publicKey,
+        escrowState: escrowState.publicKey,
+        // vaultAuthority,
+        // vaultAta,
+        mint,
+        // initializerAta,
+        // tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+      })
+      .rpc();
+
+    const afterInit = await getBalance(initializerAta);
+    const vaultBal = await getBalance(vaultAta);
+
+    expect(vaultBal).to.equal(0);
+    expect(afterInit).to.equal(beforeInit + initializerAmount.toNumber());
+
+    const escrow = await program.account.escrowState.fetch(
+      escrowState.publicKey
+    );
+    expect(escrow.state.cancelled).to.not.be.undefined;
+  });
 });
