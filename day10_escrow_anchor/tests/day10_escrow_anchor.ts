@@ -32,7 +32,7 @@ describe("day10_escrow_anchor", () => {
   const takerAmount = new anchor.BN(1);
   let escrowExpiry: anchor.BN;
 
-  // getting the token account balance
+  // Creating own helper function for getting the token account balance, we'll use this function repetitively for the deposit and withdraw tests
   const getBalance = async (ata: anchor.web3.PublicKey) => {
     const account = await getAccount(provider.connection, ata);
     return Number(account.amount);
@@ -69,8 +69,8 @@ describe("day10_escrow_anchor", () => {
     );
 
     // 4. derive vault PDA
-    [vaultAuthority] = await anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("vault"), initializer.publicKey.toBuffer()], // ? about why we have used initializer.publickey.toBuffer()
+    [vaultAuthority] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("vault"), initializer.publicKey.toBuffer()],
       program.programId
     );
 
@@ -80,15 +80,15 @@ describe("day10_escrow_anchor", () => {
       owner: vaultAuthority,
     });
 
-    // 6. creating escrow state keypair
+    // 6. creating escrow state account because we have created escrowState account on-chain so we need to do it off-chain as well
     escrowState = anchor.web3.Keypair.generate();
 
     // 7. setting expiry for the vault
-    const now = Math.floor(Date.now() / 1000);
+    const now = Math.floor(Date.now() / 1000); // have ÷(divided) by 1000 so that we get time in seconds instead of miniseconds
     escrowExpiry = new anchor.BN(now + 5);
 
     // 8. Now initializing the escrow
-    program.methods
+    await program.methods
       .initializeEscrow(initializerAmount, takerAmount, escrowExpiry)
       .accounts({
         // inside this the vaultAuthority, vaultATA, systemProgram, tokenProgram, associatedTokenProgram and rent, all are automatically derived by the IDL generated for our anchor program and thus we don't need to provide them manually but still if want to provide it manually then can use accountsStrict and provide them manually
@@ -102,7 +102,7 @@ describe("day10_escrow_anchor", () => {
         // associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
         // rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       })
-      .signers([escrowState]) // ? about -> if the escrowState acting here as a signer for initializing escrow?
+      .signers([escrowState])   // we are initializing escrow so we need the keypair of the escrowState account
       .rpc();
   });
 
@@ -131,18 +131,18 @@ describe("day10_escrow_anchor", () => {
     expect(afterInit).to.equal(beforeInit - initializerAmount.toNumber());
     expect(vaultBal).to.equal(initializerAmount.toNumber());
 
+    // Checking if the program updated escrow state correctly
     const escrow = await program.account.escrowState.fetch(
       escrowState.publicKey
     );
-
-    expect(escrow.state.deposited).to.not.be.undefined;
+    expect(escrow.state.deposited).to.not.be.undefined; // if escrow state is not deposited, then this would be undefined
   });
 
   // --------------------------
   //     WITHDRAW TEST (before expiry of escrow ->  should fail)
   // --------------------------
   it("fails to withdraw before expiry", async () => {
-    await assert.rejects(
+    await assert.rejects(    // assert needs to be imported from "assert" and not from "chai"
       program.methods
         .withdrawTokens()
         .accounts({
