@@ -135,7 +135,8 @@ pub struct InitializeEscrow<'info> {
     #[account(mut)]
     pub initializer: Signer<'info>,
 
-    /// CHECK: This PDA stores no data.
+    /// CHECK: This is a PDA derived from known seeds.
+    /// It is used only as a signing authority and holds no data.
     #[account(
         seeds = [b"vault", initializer.key().as_ref()],   // Used to find the PDA for the ATA internally using -> Pubkey::find_program_address(seeds), the PDA will be used to sign transactions by the Vault or ATA
         bump, // This is the bump which is found while finding the PDA (as extra value), will be needed when using PDA to sign transactions
@@ -187,7 +188,8 @@ pub struct DepositTokens<'info> {
     )]
     pub escrow_state: Account<'info, EscrowState>,
 
-    // Vault authority or PDA
+    /// CHECK: This is a PDA derived from known seeds.
+    /// It is used only as a signing authority and holds no data.
     #[account(
         seeds = [b"vault", initializer.key().as_ref()],
         bump = escrow_state.bump,
@@ -230,6 +232,8 @@ pub struct WithdrawTokens<'info> {
     )]
     pub escrow_state: Account<'info, EscrowState>,
 
+    /// CHECK: This is a PDA derived from known seeds.
+    /// It is used only as a signing authority and holds no data.
     #[account(
         seeds = [b"vault", initializer.key().as_ref()],
         bump = escrow_state.bump,
