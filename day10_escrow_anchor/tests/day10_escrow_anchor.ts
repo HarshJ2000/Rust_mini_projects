@@ -8,6 +8,7 @@ import {
   mintTo,
 } from "@solana/spl-token";
 import { expect } from "chai";
+import assert from "assert";
 
 describe("day10_escrow_anchor", () => {
   // Configure the client to use the local cluster.
@@ -135,5 +136,25 @@ describe("day10_escrow_anchor", () => {
     );
 
     expect(escrow.state.deposited).to.not.be.undefined;
+  });
+
+  // --------------------------
+  //     WITHDRAW TEST (before expiry of escrow ->  should fail)
+  // --------------------------
+  it("fails to withdraw before expiry", async () => {
+    await assert.rejects(
+      program.methods
+        .withdrawTokens()
+        .accounts({
+          initializer: initializer.publicKey,
+          escrowState: escrowState.publicKey,
+          // vaultAuthority,
+          // vaultAta,
+          // initializerAta,
+          mint,
+          // tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+        })
+        .rpc()
+    );
   });
 });
