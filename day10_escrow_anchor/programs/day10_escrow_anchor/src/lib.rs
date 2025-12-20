@@ -91,7 +91,7 @@ pub mod day10_escrow_anchor {
 
         let clock = Clock::get()?;
         require!(
-            escrow.expiry > clock.unix_timestamp,
+            clock.unix_timestamp >= escrow.expiry,
             EscrowError::ExpiredEscrow
         );
 
