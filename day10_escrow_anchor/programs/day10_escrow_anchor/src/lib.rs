@@ -7,7 +7,7 @@ use crate::state::EscrowState;
 pub mod errors;
 pub mod state;
 
-declare_id!("8UNhAJrkKqKk6gYxTzHmbSK5BHy3SJFzgQz3Ctt8LKkR");
+declare_id!("GWHDeVEboCXJfKZyuZuKX3omooMYYjMXs9SdRYa7HVNB");
 
 #[program]
 pub mod day10_escrow_anchor {

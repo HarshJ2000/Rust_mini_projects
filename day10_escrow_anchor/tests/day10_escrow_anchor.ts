@@ -1,6 +1,8 @@
 import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
+import { Program, Idl } from "@coral-xyz/anchor";
 import { Day10EscrowAnchor } from "../target/types/day10_escrow_anchor";
+import idl from "../target/idl/day10_escrow_anchor.json";
+
 import {
   createMint,
   getAccount,
@@ -15,8 +17,7 @@ describe("day10_escrow_anchor", () => {
   let provider = anchor.AnchorProvider.env(); // Get the provider from the enviroment
   anchor.setProvider(provider);
 
-  const program = anchor.workspace
-    .day10EscrowAnchor as Program<Day10EscrowAnchor>; // Loading the deployed program on localnet
+  const program = new Program<Day10EscrowAnchor>(idl as Idl, provider); // Loading the deployed program on localnet
 
   const initializer = provider.wallet; // Getting an initializer
 
@@ -36,6 +37,25 @@ describe("day10_escrow_anchor", () => {
   const getBalance = async (ata: anchor.web3.PublicKey) => {
     const account = await getAccount(provider.connection, ata);
     return Number(account.amount);
+  };
+
+  const waitUntilEscrowExpires = async () => {
+    const slot = await provider.connection.getSlot();
+    const blockTime = await provider.connection.getBlockTime(slot);
+
+    if (blockTime === null) {
+      throw new Error("Failed to fetch block time");
+    }
+
+    const now = blockTime;
+    const expiry = escrowExpiry.toNumber();
+
+    if (now >= expiry) {
+      return;
+    }
+
+    const waitMs = (expiry - now + 2) * 1000; // +2s buffer
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
   };
 
   // Setting shared states
@@ -85,7 +105,7 @@ describe("day10_escrow_anchor", () => {
 
     // 7. setting expiry for the vault
     const now = Math.floor(Date.now() / 1000); // have ÷(divided) by 1000 so that we get time in seconds instead of miniseconds
-    escrowExpiry = new anchor.BN(now + 5);
+    escrowExpiry = new anchor.BN(now + 120);
 
     // 8. Now initializing the escrow
     await program.methods
@@ -102,7 +122,7 @@ describe("day10_escrow_anchor", () => {
         // associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
         // rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       })
-      .signers([escrowState])   // we are initializing escrow so we need the keypair of the escrowState account
+      .signers([escrowState]) // we are initializing escrow so we need the keypair of the escrowState account
       .rpc();
   });
 
@@ -142,7 +162,8 @@ describe("day10_escrow_anchor", () => {
   //     WITHDRAW TEST (before expiry of escrow ->  should fail)
   // --------------------------
   it("fails to withdraw before expiry", async () => {
-    await assert.rejects(    // assert needs to be imported from "assert" and not from "chai"
+    await assert.rejects(
+      // assert needs to be imported from "assert" and not from "chai"
       program.methods
         .withdrawTokens()
         .accounts({
@@ -162,8 +183,8 @@ describe("day10_escrow_anchor", () => {
   //       WITHDRAW TEST (after expiry of the escrow ->  should pass)
   // -------------------------------
   it("success in withdrawing tokens after expiry of escrow", async () => {
-    // waiting for escrow to expire
-    await new Promise((resolve) => setTimeout(resolve, 6000));
+    // wait until on-chain time passes escrow expiry
+    await waitUntilEscrowExpires();
 
     const beforeInit = await getBalance(initializerAta);
 
