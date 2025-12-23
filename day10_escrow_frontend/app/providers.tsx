@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ConnectionProvider,
   WalletProvider,
@@ -5,8 +7,7 @@ import {
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { ReactNode } from "react";
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-require("@solana/wallet-adapter-react-ui/styles.css");
+import "@solana/wallet-adapter-react-ui/styles.css";
 
 const endpoint = "https://api.devnet.solana.com";
 

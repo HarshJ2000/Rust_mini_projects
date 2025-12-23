@@ -35,4 +35,6 @@ export function getProgram(wallet: WalletContextState) {
   if (!program.programId.equals(PROGRAM_ID)) {
     throw new Error("PROGRAM_ID mismatch between IDL and Frontend!!!!!!");
   }
+
+  return program;
 }
