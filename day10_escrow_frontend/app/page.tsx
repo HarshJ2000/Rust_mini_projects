@@ -1,6 +1,7 @@
 import { getProgram } from "@/lib/anchor";
 import { BN } from "@coral-xyz/anchor";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import toast from "react-hot-toast";
 
@@ -84,4 +85,21 @@ export default function Home() {
       toast.error(error.message);
     }
   };
+  return (
+    <main style={{ padding: 20 }}>
+      <WalletMultiButton />
+
+      <div style={{ marginTop: 20 }}>
+        <button onClick={initEscrow}>Initialize Escrow</button>
+      </div>
+
+      <div style={{ marginTop: 20 }}>
+        <button onClick={depositInEscrow}>Deposit</button>
+      </div>
+
+      <div style={{ marginTop: 20 }}>
+        <button onClick={withdrawFromEscrow}>Withdraw</button>
+      </div>
+    </main>
+  );
 }
