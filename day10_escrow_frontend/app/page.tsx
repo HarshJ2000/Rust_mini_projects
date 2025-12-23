@@ -34,4 +34,29 @@ export default function Home() {
       toast.error(error.message);
     }
   };
+
+  const depositInEscrow = async () => {
+    try {
+      if (!wallet.publicKey) throw new Error("Wallet not found!!!!!");
+
+      const escrow = localStorage.getItem("escrow");
+      if (!escrow) throw new Error("No Escrow Found!!!!!!!");
+
+      const program = getProgram(wallet);
+
+      await program.methods
+        .depositTokens()
+        .accounts({
+          initializer: wallet.publicKey,
+          escrowState: new PublicKey(escrow),
+          mint: MINT,
+        })
+        .rpc();
+
+      toast.success("Tokens Deposited.....");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message);
+    }
+  };
 }
