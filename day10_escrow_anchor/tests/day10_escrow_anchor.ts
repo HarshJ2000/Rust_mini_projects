@@ -68,6 +68,7 @@ describe("day10_escrow_anchor", () => {
       null,
       6
     );
+    // console.log("TEST MINT: ", mint.toBase58());    // Use this to get the mint address
 
     // 2. create initializer ATA
     let initATA = await getOrCreateAssociatedTokenAccount(

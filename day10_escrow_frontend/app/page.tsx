@@ -1,3 +1,4 @@
+"use client";
 import { getProgram } from "@/lib/anchor";
 import { BN } from "@coral-xyz/anchor";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -5,7 +6,7 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import toast from "react-hot-toast";
 
-const MINT = new PublicKey("");
+const MINT = new PublicKey("5WYMZpCiApdbpiVPB1LitttYAe9Q2uRfUisfu2cyTjVm");
 
 export default function Home() {
   const wallet = useWallet();
