@@ -1,6 +1,8 @@
+"use client";
 import { getProgram } from "@/lib/anchor";
-import { BN } from "@coral-xyz/anchor";
+import { BN, Wallet } from "@coral-xyz/anchor";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -56,5 +58,64 @@ export default function InitEscrowPage() {
       setLoading(false);
     }
   }
-  return ();
+  return (
+    <main style={{ padding: 24 }}>
+      <h1>Initialize Escrow</h1>
+      <WalletMultiButton />
+      <br />
+      <br />
+      <label>
+        Initializer Amount:
+        <input
+          value={initializerAmount}
+          onChange={(e) => setInitializerAmount(e.target.value)}
+        />
+      </label>
+      <br />
+      <br />
+      <label>
+        Taker Amount:
+        <input
+          value={takerAmount}
+          onChange={(e) => setTakerAmount(e.target.value)}
+        />
+      </label>
+      <br />
+      <br />
+      <label>
+        Expiry (seconds):
+        <input
+          value={expirySeconds}
+          onChange={(e) => setExpirySeconds(e.target.value)}
+        />
+      </label>
+      <br />
+      <br />
+      <button onClick={initializeEscrow} disabled={loading}>
+        {loading ? "Initializing...." : "Create Escrow"}
+      </button>
+
+      {escrowState && (
+        <>
+          <br />
+          <br />
+          <strong>Escrow State: </strong>
+          <p>{escrowState}</p>
+        </>
+      )}
+
+      {txSig && (
+        <>
+          <br />
+          <br />
+          <a
+            href={`https://explorer.solana.com/tx/${txSig}?cluster=devnet`}
+            target="_blank"
+          >
+            View Transaction
+          </a>
+        </>
+      )}
+    </main>
+  );
 }
