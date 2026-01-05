@@ -41,16 +41,23 @@ pub mod day10_escrow_anchor {
         escrow_state.bump = ctx.bumps.vault_authority;
         escrow_state.state = EscrowStatus::Initialized;
 
+        msg!("Escrow Initialized...");
+        msg!("Initializer: {}", escrow_state.initializer);
+        msg!("State: Initialized");
+
         Ok(())
     }
 
     pub fn deposit_tokens(ctx: Context<DepositTokens>) -> Result<()> {
         let escrow = &mut ctx.accounts.escrow_state;
 
+        msg!("Deposit Started...");
+        msg!("State before: {:?}", escrow.state);
+
         // Validating if Initializer is authorized or not?
         require!(
             escrow.state == EscrowStatus::Initialized,
-            EscrowError::Unauthorized
+            EscrowError::InvalidState
         );
 
         // Validating Escrow Expiry
@@ -78,15 +85,21 @@ pub mod day10_escrow_anchor {
         // Updating the escrow state to deposited
         escrow.state = EscrowStatus::Deposited;
 
+        msg!("Deposit successful...");
+        msg!("State changed to: Deposited");
+
         Ok(())
     }
 
     pub fn withdraw_tokens(ctx: Context<WithdrawTokens>) -> Result<()> {
         let escrow = &mut ctx.accounts.escrow_state;
 
+        msg!("Withdraw Started...");
+        msg!("State before: {:?}", escrow.state);
+
         require!(
             escrow.state == EscrowStatus::Deposited,
-            EscrowError::Unauthorized
+            EscrowError::InvalidState
         );
 
         let clock = Clock::get()?;
@@ -122,7 +135,10 @@ pub mod day10_escrow_anchor {
         )?;
 
         // updating the state for the escrow
-        escrow.state = EscrowStatus::Cancelled;
+        escrow.state = EscrowStatus::Refunded;
+
+        msg!("Withdraw Successful...");
+        msg!("State changed to: Cancelled");
 
         Ok(())
     }

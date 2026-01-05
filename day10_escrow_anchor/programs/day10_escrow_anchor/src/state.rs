@@ -11,10 +11,11 @@ pub struct EscrowState {
     pub state: EscrowStatus,
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, PartialEq, Clone, Eq)]
+#[derive(AnchorSerialize, AnchorDeserialize, PartialEq, Clone, Eq, Debug)]
 pub enum EscrowStatus {
     Initialized,
     Deposited,
     Completed,
+    Refunded,
     Cancelled,
 }
