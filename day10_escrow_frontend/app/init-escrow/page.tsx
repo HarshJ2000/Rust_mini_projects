@@ -1,6 +1,6 @@
 "use client";
 import { getProgram } from "@/lib/anchor";
-import { BN, Wallet } from "@coral-xyz/anchor";
+import { BN } from "@coral-xyz/anchor";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { Keypair, PublicKey } from "@solana/web3.js";
@@ -40,7 +40,7 @@ export default function InitEscrowPage() {
       );
 
       const tx = await program.methods
-        .initializeEscrow()
+        .initializeEscrow(initAmount, takeAmount, expiry)
         .accounts({
           initializer: wallet.publicKey,
           taker: escrowKeypair.publicKey,
