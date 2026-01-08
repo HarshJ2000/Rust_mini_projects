@@ -1,12 +1,11 @@
 use anchor_lang::prelude::*;
 
+pub mod contexts;
 pub mod errors;
 pub mod instructions;
 pub mod state;
 
-use crate::instructions::deposit::DepositTokens;
-use crate::instructions::initialize::InitializeEscrow;
-use crate::instructions::withdraw::WithdrawTokens;
+use contexts::{DepositTokens, InitializeEscrow, WithdrawTokens};
 
 declare_id!("GWHDeVEboCXJfKZyuZuKX3omooMYYjMXs9SdRYa7HVNB");
 
