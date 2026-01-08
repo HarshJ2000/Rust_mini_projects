@@ -19,3 +19,17 @@ pub enum EscrowStatus {
     Refunded,
     Cancelled,
 }
+
+pub trait EscrowLifecycle {
+    fn can_deposit(&self) -> bool;
+    fn can_withdraw(&self, now: i64) -> bool;
+}
+
+impl EscrowLifecycle for EscrowState {
+    fn can_deposit(&self) -> bool {
+        self.state == EscrowStatus::Initialized
+    }
+    fn can_withdraw(&self, now: i64) -> bool {
+        self.state == EscrowStatus::Deposited && now >= self.expiry
+    }
+}
