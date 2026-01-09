@@ -19,7 +19,7 @@ jobs:
           override: true
 
       - name: Install Solana
-        uses: metaplex-foundation/actions/setup-solana@v2
+        uses: ./.github/actions/setup-solana
 
       - name: Install Anchor
         run: |

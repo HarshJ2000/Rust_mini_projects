@@ -1,0 +1,14 @@
+name: Setup Solana
+description: Install Solana CLI safely for CI
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Solana
+      run: |
+        curl -sSfL https://release.solana.com/stable/install -o solana-install.sh
+        bash solana-install.sh
+        echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+        solana --version
+        solana-keygen --version
+      shell: bash
