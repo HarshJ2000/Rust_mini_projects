@@ -19,16 +19,7 @@ jobs:
           override: true
 
       - name: Install Solana
-        run: |
-          sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
-          echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
-          solana --version
-          solana-keygen --version
-
-      - name: Install Solana SBF tools
-        run: |
-          solana config set --url localhost
-          solana-install init stable
+        uses: metaplex-foundation/actions/setup-solana@v1
 
       - name: Install Anchor
         run: |
