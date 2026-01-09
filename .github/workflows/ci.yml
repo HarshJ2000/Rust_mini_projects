@@ -2,16 +2,15 @@ name: Solana Anchor CI
 
 on:
   push:
-    branches: ["main", "master", "day14-security-review-refactor-cicd"]
+    branches: ["main", "day14-security-review-refactor-cicd"]
   pull_request:
 
 jobs:
-  build-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -19,30 +18,19 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: Cache Cargo
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Install Solana CLI
+      - name: Install Solana
         run: |
           sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
           echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
 
       - name: Install Anchor
         run: |
-          cargo install --git https://github.com/coral-xyz/anchor anchor-cli --locked
+          cargo install --git https://github.com/coral-xyz/anchor avm --locked
+          avm install latest
+          avm use latest
 
-      - name: Generate keypair
+      - name: Build & Test Anchor program
+        working-directory: day10_escrow_anchor
         run: |
-          solana-keygen new --no-bip39-passphrase --silent --force
-
-      - name: Run Anchor Build
-        run: anchor build
-
-      - name: Run Anchor Tests
-        run: anchor test
+          anchor build
+          anchor test
