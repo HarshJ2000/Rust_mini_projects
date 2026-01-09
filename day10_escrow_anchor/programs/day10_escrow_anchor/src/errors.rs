@@ -13,4 +13,7 @@ pub enum EscrowError {
 
     #[msg("Unauthorized User!!!!!!")]
     Unauthorized,
+
+    #[msg("Escrow Already Initialized!!!!!!")]
+    AlreadyInitialized,
 }

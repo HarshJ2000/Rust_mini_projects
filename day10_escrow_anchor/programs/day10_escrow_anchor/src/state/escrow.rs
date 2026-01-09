@@ -23,6 +23,8 @@ pub enum EscrowStatus {
 pub trait EscrowLifecycle {
     fn can_deposit(&self) -> bool;
     fn can_withdraw(&self, now: i64) -> bool;
+    fn can_complete(&self) -> bool;
+    fn can_cancel(&self) -> bool;
 }
 
 impl EscrowLifecycle for EscrowState {
@@ -31,5 +33,14 @@ impl EscrowLifecycle for EscrowState {
     }
     fn can_withdraw(&self, now: i64) -> bool {
         self.state == EscrowStatus::Deposited && now >= self.expiry
+    }
+    fn can_complete(&self) -> bool {
+        self.state == EscrowStatus::Deposited
+    }
+    fn can_cancel(&self) -> bool {
+        matches!(
+            self.state,
+            EscrowStatus::Initialized | EscrowStatus::Deposited
+        )
     }
 }

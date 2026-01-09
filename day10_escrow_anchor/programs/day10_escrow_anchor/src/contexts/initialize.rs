@@ -33,6 +33,8 @@ pub struct InitializeEscrow<'info> {
         init,
         payer = initializer,
         space = 8 + std::mem::size_of::<EscrowState>(), // Anchor account discriminator(Unique prefix for Anchor Accounts) + Rust compile-time size of the struct
+        seeds = [b"vault", initializer.key().as_ref()],
+        bump
     )]
     pub escrow_state: Account<'info, EscrowState>,
 

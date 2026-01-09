@@ -1,7 +1,7 @@
-use anchor_lang::prelude::*;
+use crate::contexts::InitializeEscrow;
 use crate::errors::*;
 use crate::state::*;
-use crate::contexts::InitializeEscrow;
+use anchor_lang::prelude::*;
 
 pub fn handler(
     ctx: Context<InitializeEscrow>,
@@ -9,6 +9,19 @@ pub fn handler(
     taker_amount: u64,
     expiry: i64,
 ) -> Result<()> {
+    let escrow = &mut ctx.accounts.escrow_state;
+
+    msg!("--- Escrow Initialization ---");
+    msg!("initializer: {}", ctx.accounts.initializer.key());
+    msg!("initializer_amount: {}", initializer_amount);
+    msg!("taker_amount: {}", taker_amount);
+    msg!("expiry: {}", expiry);
+
+    require!(
+        escrow.state != EscrowStatus::Initialized,
+        EscrowError::AlreadyInitialized
+    );
+
     // Validating valid amount
     if initializer_amount == 0 || taker_amount == 0 {
         return err!(EscrowError::InvalidAmount);
@@ -16,12 +29,13 @@ pub fn handler(
 
     // Validating escrow not expired
     let clock = Clock::get()?;
-    if expiry <= clock.unix_timestamp {
-        return err!(EscrowError::ExpiredEscrow);
-    }
+    require!(
+        expiry > clock.unix_timestamp + 60,
+        EscrowError::ExpiredEscrow
+    );
 
     // Setting Escrow States, which will be needed later while interacting with the escrow vault
-    let escrow_state = &mut ctx.accounts.escrow_state;
+    let escrow_state: &mut Account<'_, EscrowState> = &mut ctx.accounts.escrow_state;
     escrow_state.initializer = ctx.accounts.initializer.key();
     escrow_state.initializer_amount = initializer_amount;
     escrow_state.taker_amount = taker_amount;
@@ -31,7 +45,7 @@ pub fn handler(
 
     msg!("Escrow Initialized...");
     msg!("Initializer: {}", escrow_state.initializer);
-    msg!("State: Initialized");
+    msg!("escrow_state: Initialized");
 
     Ok(())
 }
